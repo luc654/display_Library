@@ -64,6 +64,7 @@ A button component has three parameters,
 - xPos
 - yPos
 - active
+- callback
 
 **Text** is like on he text component, the text that appears inside the button
 
@@ -71,11 +72,42 @@ A button component has three parameters,
 
 **yPos** is the position in pixels from the right most side
 
-**active** is wether the button is active or not, it is recommended to only have one active button on the display at once.
+**active** is whether the button is active or not, it is recommended to only have one active button on the display at once.
 
+**callback** is the name of the function that gets called when the button is pressed. To call a function native to the library you must pass the library name with it, such as ```DisplayLib::back```. 
+If for some reason you dont need a callback then you can pass a null pointer as parameter instead. 
+
+There are two requirements that have to be met before a callback runs, first the button with the callback must  be active & the ```flush()``` function has to be called.
+
+setup()
 ```
-  displayController.addButton("one", 2, 50, true);
-  displayController.addButton("two", 45, 50, false);
-  displayController.addButton("three", 90, 50, false);
+  displayController.addButton("one", 2, 50, true, DisplayLib::back);
+  displayController.addButton("two", 45, 50, false, nullptr);
+  displayController.addButton("three", 90, 50, false, nullptr);
+```
+
+loop()
+```
+void loop() {
+  displayController.updateScreen();
+
+    if(digitalRead(BUTTON_A)){
+    displayController.cycle(true);
+  } 
+  if(digitalRead(BUTTON_B)){
+    displayController.flush();
+  } 
+
+  if(digitalRead(BUTTON_C)){
+    displayController.cycle(false);
+  } 
+  
+  
+  delay(200);
+}
 ```
 In this example three buttons will appear on the bottom of the screen. Cycling between buttons happens from top to down, so if you press right while on button ```one``` you will cycle to button ```two```. If there are no further buttons then it will cycle back to the first button.
+
+Analog button B will **flush** the active digital button, is digital button 'one' is active it will run function ```DisplayLib::back```. Digital button 'two' and 'three' both have a null pointer as parameter meaning they have no callback. 
+
+Analog button A and C both cycle between the digital buttons. The ```true``` parameter means cycle forward and ```false``` will cycle backwards. 
