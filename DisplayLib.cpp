@@ -17,12 +17,13 @@ struct TextParams {
   int y;
 };
 
-struct ButtonParams{
+struct ButtonParams {
   int id;
   const char* text;
   int x;
   int y;
   boolean active;
+  void (*action)(); 
 };
 
 struct DisplayElement {
@@ -54,18 +55,21 @@ void DisplayLib::addText(const char* text, int xPos, int yPos) {
   elementCount++;
 }
 
-void DisplayLib::addButton(const char* text, int xPos, int yPos, boolean active){
+void DisplayLib::addButton(const char* text, int xPos, int yPos, boolean active, void(*new_action)()){
   if (elementCount >= MAX_ELEMENTS) return;
 
+  ButtonParams btn = { elementCount, text, xPos, yPos, active, new_action };
+
   screenElements[elementCount].type = BUTTON;
-  screenElements[elementCount].data.buttonParams = { elementCount, text, xPos, yPos, active };
+  screenElements[elementCount].data.buttonParams = btn;
 
   clickableElements[clickableCount].type = BUTTON;
-  clickableElements[clickableCount].data.buttonParams = { elementCount, text, xPos, yPos, active };
+  clickableElements[clickableCount].data.buttonParams = btn;
 
   clickableCount++;
   elementCount++;
 }
+
 
 
 
@@ -106,6 +110,32 @@ void DisplayLib::cycle(boolean forward) {
   }
 }
 
+
+void DisplayLib::flush() {
+  void (*action)() = nullptr;
+  for (int i = 0; i < clickableCount; i++) {
+    int id = clickableElements[i].data.buttonParams.id;
+    if (screenElements[id].data.buttonParams.active) {
+      Serial.print("Active ID ");
+      Serial.println(id);
+
+      action = screenElements[id].data.buttonParams.action;
+      if (action != nullptr) {
+
+        action();  
+  }
+      break;
+    } else {
+      Serial.print("Not active ID ");
+      Serial.println(id);
+    }
+  }
+}
+
+
+void DisplayLib::back(){
+  Serial.println("We're back");
+}
 
 // 
 // Private functions
@@ -150,4 +180,7 @@ void DisplayLib::handleElement(DisplayElement el) {
     default:
       break;
   }
+
+
+
 }

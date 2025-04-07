@@ -5,10 +5,11 @@ class DisplayLib {
     DisplayLib(Adafruit_SH1106G* displayObject); 
     void begin();
     void addText(const char* text, int xPos, int yPos);
-    void addButton(const char* text, int xPos, int yPos, boolean active);
+    void addButton(const char* text, int xPos, int yPos, boolean active, void(*new_action)() = back);
     void cycle(boolean cycle);
     void updateScreen();
-
+    void flush();
+    static void back();
 
     private:
     Adafruit_SH1106G* _display; 
