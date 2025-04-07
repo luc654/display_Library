@@ -4,6 +4,7 @@
 #include <Adafruit_SH110X.h>
 
 #define MAX_ELEMENTS 10
+#define MAX_SCREENS 10
 
 enum ElementType {
   TEXT,
@@ -36,8 +37,23 @@ struct DisplayElement {
 
 DisplayElement screenElements[MAX_ELEMENTS];
 DisplayElement clickableElements[MAX_ELEMENTS];
+
+
+struct ScreenLoaded {
+  const char* name;
+  DisplayElement screenElements[MAX_ELEMENTS];
+  DisplayElement clickableElements[MAX_ELEMENTS];
+  int elementCount;
+  int clickableCount;
+};
+
+
+ScreenLoaded screens[MAX_SCREENS];
+
 int elementCount = 0;
 int clickableCount = 0;
+int screenCount = 0;
+
 DisplayLib::DisplayLib(Adafruit_SH1106G* displayObject) {
   _display = displayObject;
 }
@@ -55,10 +71,10 @@ void DisplayLib::addText(const char* text, int xPos, int yPos) {
   elementCount++;
 }
 
-void DisplayLib::addButton(const char* text, int xPos, int yPos, boolean active, void(*new_action)()){
+void DisplayLib::addButton(const char* text, int xPos, int yPos, boolean active, void(*callback)()){
   if (elementCount >= MAX_ELEMENTS) return;
 
-  ButtonParams btn = { elementCount, text, xPos, yPos, active, new_action };
+  ButtonParams btn = { elementCount, text, xPos, yPos, active, callback };
 
   screenElements[elementCount].type = BUTTON;
   screenElements[elementCount].data.buttonParams = btn;
@@ -136,6 +152,56 @@ void DisplayLib::flush() {
 void DisplayLib::back(){
   Serial.println("We're back");
 }
+
+void DisplayLib::safeScreen(const char* name){
+  screens[screenCount].name = name;
+  screens[screenCount].elementCount = elementCount;
+  screens[screenCount].clickableCount = clickableCount;
+
+  for (int i = 0; i < elementCount; i++) {
+    screens[screenCount].screenElements[i] = screenElements[i];
+  }
+
+  for (int i = 0; i < clickableCount; i++) {
+    screens[screenCount].clickableElements[i] = clickableElements[i];
+  }
+
+  screenCount++;
+
+  elementCount = 0;
+  clickableCount = 0;
+}
+
+
+void DisplayLib::loadScreen(const char* name){
+  for (int i = 0; i < screenCount; i++) {
+    if (strcmp(screens[i].name, name) == 0) {
+      elementCount = screens[i].elementCount;
+      clickableCount = screens[i].clickableCount;
+
+      for (int j = 0; j < elementCount; j++) {
+        screenElements[j] = screens[i].screenElements[j];
+      }
+
+      for (int j = 0; j < clickableCount; j++) {
+        clickableElements[j] = screens[i].clickableElements[j];
+      }
+
+      updateScreen();
+      return;
+    }
+  }
+
+  // fallback
+  updateScreen();
+}
+
+
+
+
+
+
+
 
 // 
 // Private functions

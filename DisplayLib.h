@@ -9,6 +9,8 @@ class DisplayLib {
     void cycle(boolean cycle);
     void updateScreen();
     void flush();
+    void safeScreen(const char* name);
+    void loadScreen(const char* name);
     static void back();
 
     private:
