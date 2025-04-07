@@ -4,7 +4,7 @@
 #include <Adafruit_SH110X.h>
 #include <DisplayLib.h>
 
-// Define screen.
+// Define screen
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define OLED_RESET -1
@@ -23,9 +23,9 @@ void setup() {
   Serial.begin(9600);
   displayController.begin(); 
   displayController.addText("Hello, World!!", 10, 30);
-  displayController.addButton("one", 2, 50, true);
-  displayController.addButton("two", 45, 50, false);
-  displayController.addButton("three", 90, 50, false);
+  displayController.addButton("one", 2, 50, true, DisplayLib::back);
+  displayController.addButton("two", 45, 50, false, nullptr);
+  displayController.addButton("three", 90, 50, false, nullptr);
 
 
   pinMode(BUTTON_A, INPUT_PULLUP);
@@ -38,15 +38,13 @@ void loop() {
   displayController.updateScreen();
 
     if(digitalRead(BUTTON_A)){
-    Serial.println(" A");
     displayController.cycle(true);
   } 
   if(digitalRead(BUTTON_B)){
-    Serial.println(" B");
+    displayController.flush();
   } 
 
   if(digitalRead(BUTTON_C)){
-    Serial.println(" C");
     displayController.cycle(false);
   } 
   
