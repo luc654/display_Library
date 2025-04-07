@@ -55,11 +55,13 @@ A text component has three parameters,
 ```
   displayController.addText("Hello, World!!", 10, 30);
 ```
+
 In this example the text ```Hello, World!!``` appears somewhere in the middle of the screen.
 
+---
 ### Button
 
-A button component has three parameters, 
+A button component has five parameters, 
 - Text
 - xPos
 - yPos
@@ -76,9 +78,16 @@ A button component has three parameters,
 
 **callback** is the name of the function that gets called when the button is pressed. To call a function native to the library you must pass the library name with it, such as ```DisplayLib::back```. 
 If for some reason you dont need a callback then you can pass a null pointer as parameter instead. 
+You can also add lambda style callbacks so you can pass parameters through functions like here 
+```
+displayController.addButton("next", 90, 50, false, [](void) {
+      displayController.loadScreen("settings");
+  });
+```
 
 There are two requirements that have to be met before a callback runs, first the button with the callback must  be active & the ```flush()``` function has to be called.
 
+---
 setup()
 ```
   displayController.addButton("one", 2, 50, true, DisplayLib::back);
@@ -111,3 +120,35 @@ In this example three buttons will appear on the bottom of the screen. Cycling b
 Analog button B will **flush** the active digital button, is digital button 'one' is active it will run function ```DisplayLib::back```. Digital button 'two' and 'three' both have a null pointer as parameter meaning they have no callback. 
 
 Analog button A and C both cycle between the digital buttons. The ```true``` parameter means cycle forward and ```false``` will cycle backwards. 
+
+---
+
+
+## Screens
+
+Each screen is defined in the ```setup()``` part of the program. first you define each component and afterwards you give it a name. There are two functions related to screens, ```safeScreen(name)``` to safe a newly made screen (used in setup()) and ```loadScreen(name)``` to load a screen (used in both setup() and loop()).
+
+```setup()```
+```
+//  Home screen 
+  displayController.addText("Hello, World!!", 10, 30);
+  displayController.addButton("one", 2, 50, true, DisplayLib::back);
+  displayController.addButton("two", 45, 50, false, nullptr);
+  displayController.addButton("next", 90, 50, false, [](void) {
+      displayController.loadScreen("settings");
+  });
+  displayController.safeScreen("home");
+  delay(20);
+
+  // Settings screen
+  displayController.addText("Wow another page?", 10, 30);
+  displayController.addButton("Back", 2, 50, true, [](void) {
+      displayController.loadScreen("home");
+  });
+  displayController.addButton("two", 45, 50, false, nullptr);
+  displayController.addButton("three", 90, 50, false, nullptr);
+  displayController.safeScreen("settings");
+
+  displayController.loadScreen("home");
+```
+In this example two screens are made, the first screen gets the name ```home``` and is loaded at the end of the function.
