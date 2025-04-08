@@ -37,7 +37,7 @@ struct DisplayElement {
 
 DisplayElement screenElements[MAX_ELEMENTS];
 DisplayElement clickableElements[MAX_ELEMENTS];
-
+std::vector<string> history;
 
 struct ScreenLoaded {
   const char* name;
@@ -150,7 +150,8 @@ void DisplayLib::flush() {
 
 
 void DisplayLib::back(){
-  Serial.println("We're back");
+  history.pop_back();
+  loadScreen(history.back());
 }
 
 void DisplayLib::safeScreen(const char* name){
@@ -187,6 +188,7 @@ void DisplayLib::loadScreen(const char* name){
         clickableElements[j] = screens[i].clickableElements[j];
       }
 
+      history.push_back(name);
       updateScreen();
       return;
     }
