@@ -152,3 +152,25 @@ Each screen is defined in the ```setup()``` part of the program. first you defin
   displayController.loadScreen("home");
 ```
 In this example two screens are made, the first screen gets the name ```home``` and is loaded at the end of the function.
+
+
+
+## Handy functions
+
+### Back()
+Each call to load screen adds the name of the a history vector. By calling the back() function the latest entry in the history vector gets destroyed and the previous entry is called as parameter to the ```loadScreen(name)``` function.
+
+Example
+```
+  displayController.addButton("Go back", 2, 50, true, DisplayLib::back);
+```
+
+### Flush()
+Flush() activates the callback of the current active digital button. 
+
+Example
+```
+  if(digitalRead(BUTTON_B)){
+    displayController.flush();
+  } 
+```
