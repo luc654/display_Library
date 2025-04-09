@@ -8,6 +8,8 @@
 #define MAX_ELEMENTS 10
 #define MAX_SCREENS 10
 
+bool checkboxStates[MAX_ELEMENTS] = {false};
+
 enum ElementType { TEXT, BUTTON, CHECKBOX };
 
 struct TextParams {
@@ -46,6 +48,7 @@ struct DisplayElement {
 DisplayElement screenElements[MAX_ELEMENTS];
 DisplayElement clickableElements[MAX_ELEMENTS];
 std::vector<std::string> history;
+
 
 struct ScreenLoaded {
   const char *name;
@@ -160,11 +163,14 @@ void DisplayLib::flush() {
     int id = clickableElements[i].id;
     if (screenElements[id].active) {
 
-      // Set checkbox to clicked
-      if(screenElements[id].type == CHECKBOX){
-        screenElements[id].data.checkParams.clicked = !screenElements[id].data.checkParams.clicked;
-        clickableElements[id].data.checkParams.clicked = !clickableElements[id].data.checkParams.clicked;
+      if (screenElements[id].type == CHECKBOX) {
+        checkboxStates[id] = !checkboxStates[id]; 
+      
+  
+        screenElements[id].data.checkParams.clicked = checkboxStates[id];
+        clickableElements[i].data.checkParams.clicked = checkboxStates[id];
       }
+      
 
       action = screenElements[id].action;
       if (action != nullptr) {
@@ -183,7 +189,13 @@ void DisplayLib::safeScreen(const char *name) {
 
   for (int i = 0; i < elementCount; i++) {
     screens[screenCount].screenElements[i] = screenElements[i];
+  
+    if (screenElements[i].type == CHECKBOX) {
+      int id = screenElements[i].id;
+      screens[screenCount].screenElements[i].data.checkParams.clicked = checkboxStates[id];
+    }
   }
+  
 
   for (int i = 0; i < clickableCount; i++) {
     screens[screenCount].clickableElements[i] = clickableElements[i];
@@ -216,12 +228,22 @@ void DisplayLib::loadScreen(const char *name) {
 
       for (int j = 0; j < elementCount; j++) {
         screenElements[j] = screens[i].screenElements[j];
+      
+        if (screenElements[j].type == CHECKBOX) {
+          int id = screenElements[j].id;
+          screenElements[j].data.checkParams.clicked = checkboxStates[id];
+        }
       }
-
+      
       for (int j = 0; j < clickableCount; j++) {
         clickableElements[j] = screens[i].clickableElements[j];
+      
+        if (clickableElements[j].type == CHECKBOX) {
+          int id = clickableElements[j].id;
+          clickableElements[j].data.checkParams.clicked = checkboxStates[id];
+        }
       }
-
+      
       history.push_back(name);
       updateScreen();
       return;
@@ -258,9 +280,9 @@ void DisplayLib::showCheckbox(int xPos, int yPos, int size, boolean active, bool
   _display->setCursor(xPos, yPos);
   _display->drawRect(xPos, yPos, size, size, SH110X_WHITE);
 
+  
+  
   // Since there are 4 states a checkbox can be in we need 4 styles
-  
-  
   if (active && clicked){
   _display->drawRect(xPos - 1, yPos - 1, size + 2, size + 2, SH110X_WHITE);
   _display->drawLine(xPos, yPos+ size - 1, xPos + size - 1, yPos, SH110X_WHITE);
