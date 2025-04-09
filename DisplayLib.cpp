@@ -276,6 +276,7 @@ void DisplayLib::showButton(const char *text, int xPos, int yPos,
   }
   _display->setCursor(xPos, yPos);
   _display->println(text);
+  _display->drawRect(xPos - 2, yPos - 2, (strlen(text) * 6) + 4, 12,SH110X_WHITE);
   _display->setTextColor(SH110X_WHITE);
 }
 
