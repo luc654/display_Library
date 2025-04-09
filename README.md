@@ -23,13 +23,14 @@ void setup() {
   displayController.addText("Hello, yes!!", 10, 50);
 }
 ```
+*See [screens](#screens) for indepth explanation*
 
 In the Loop function update the screen with a small delay to spare the microcontroller's processor.
 
 ```
 void loop() {
   displayController.updateScreen();
-  delay(2000);
+  delay(200);
 }
 ```
 
@@ -37,7 +38,7 @@ void loop() {
 
 ## Components
 
-Each component has different parameters. There are currently two components, text and buttons. 
+Each component has different parameters. There are currently three components, text, buttons and checkboxes. 
 
 ### Text
 
@@ -48,9 +49,9 @@ A text component has three parameters,
 
 **Text** is relatively straight forward, its the text that shows up in the text component. There are currently no fonts or styling so each word will look the same
 
-**xPos** is the position in pixels from the right most side
+**xPos** is the position in pixels from the right most side.
 
-**yPos** is the position in pixels from the right most side
+**yPos** is the position in pixels from the top most side.
 
 ```
   displayController.addText("Hello, World!!", 10, 30);
@@ -70,11 +71,11 @@ A button component has five parameters,
 
 **Text** is like on he text component, the text that appears inside the button
 
-**xPos** is the position in pixels from the right most side
+**xPos** is the position in pixels from the right most side.
 
-**yPos** is the position in pixels from the right most side
+**yPos** is the position in pixels from the top most side.
 
-**active** is whether the button is active or not, it is recommended to only have one active button on the display at once.
+**active** is whether the button is active or not, it is recommended to only have one active component on the display at once.
 
 **callback** is the name of the function that gets called when the button is pressed. To call a function native to the library you must pass the library name with it, such as ```DisplayLib::back```. 
 If for some reason you dont need a callback then you can pass a null pointer as parameter instead. 
@@ -123,6 +124,43 @@ Analog button A and C both cycle between the digital buttons. The ```true``` par
 
 ---
 
+## Checkboxes
+Checkboxes are the most advanced of the components, each checkbox automatically stores its value in a global array so it keeps its value inbetween screen switches. 
+
+
+A checkbox component has six parameters, 
+- xPos
+- yPos
+- size
+- active
+- clicked
+- callback
+
+
+
+**xPos** is the position in pixels from the right most side.
+
+**yPos** is the position in pixels from the top most side.
+
+**Size** X and Y size in pixels.
+
+**active** is whether the checkbox is active or not, it is recommended to only have one active component on the display at once.
+
+**clicked** is whether the checkbox has been clicked (crossed). Switches to TRUE once the flush function is called and a checkbox is active.
+
+**callback** is the name of the function that gets called when the checkbox is pressed. To call a function native to the library you must pass the library name with it, such as ```DisplayLib::back```. 
+If for some reason you dont need a callback then you can pass a null pointer as parameter instead. 
+You can also add lambda style callbacks so you can pass parameters through functions like here.
+
+```
+  displayController.addCheckbox(25, 30, 10, false, false, []() {
+    displayController.back();
+  });
+```
+
+
+
+---
 
 ## Screens
 
