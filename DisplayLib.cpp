@@ -15,7 +15,7 @@ enum ElementType { TEXT, BUTTON, CHECKBOX };
 struct TextParams {
   const char *text;
   int x;
-  int y;
+  int y;  
 };
 
 struct ButtonParams {
@@ -123,6 +123,10 @@ void DisplayLib::addCheckbox(int xPos, int yPos, int size,
   clickableElements[clickableCount].action = callback;
   clickableElements[clickableCount].id = elementCount;
 
+
+  checkboxStates[elementCount] = clicked; 
+  
+  
   clickableCount++;
   elementCount++;
 }
