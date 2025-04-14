@@ -139,6 +139,7 @@ void DisplayLib::begin() {
 }
 
 void DisplayLib::cycle(boolean forward) {
+  if (clickableCount == 1) { return;} 
   for (int i = 0; i < clickableCount; i++) {
     clickableElements[i].active = false;
   }
