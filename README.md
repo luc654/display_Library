@@ -42,16 +42,19 @@ Each component has different parameters. There are currently three components, t
 
 ### Text
 
-A text component has three parameters, 
+A text component has four parameters, 
 - Text
 - xPos
 - yPos
+- identifier
 
 **Text** is relatively straight forward, its the text that shows up in the text component. There are currently no fonts or styling so each word will look the same
 
 **xPos** is the position in pixels from the right most side.
 
 **yPos** is the position in pixels from the top most side.
+
+**identifier** (string) is an optional parameter used for the [setText](#settext) function.
 
 ```
   displayController.addText("Hello, World!!", 10, 30);
@@ -62,11 +65,10 @@ In this example the text ```Hello, World!!``` appears somewhere in the middle of
 ---
 ### Button
 
-A button component has five parameters, 
+A button component has four parameters, 
 - Text
 - xPos
-- yPos
-- active
+- yPos 
 - callback
 
 **Text** is like on he text component, the text that appears inside the button
@@ -75,25 +77,22 @@ A button component has five parameters,
 
 **yPos** is the position in pixels from the top most side.
 
-**active** is whether the button is active or not, it is recommended to only have one active component on the display at once.
-
-**callback** is the name of the function that gets called when the button is pressed. To call a function native to the library you must pass the library name with it, such as ```DisplayLib::back```. 
-If for some reason you dont need a callback then you can pass a null pointer as parameter instead. 
-You can also add lambda style callbacks so you can pass parameters through functions like here 
+**callback** is the name of the function that gets called when the button is pressed. To call a function you must pass it as a lambda function: 
 ```
 displayController.addButton("next", 90, 50, false, [](void) {
       displayController.loadScreen("settings");
   });
 ```
+If for some reason you dont need a callback then you can pass a null pointer as parameter instead. 
 
 There are two requirements that have to be met before a callback runs, first the button with the callback must  be active & the ```flush()``` function has to be called.
 
 ---
 setup()
 ```
-  displayController.addButton("one", 2, 50, true, DisplayLib::back);
-  displayController.addButton("two", 45, 50, false, nullptr);
-  displayController.addButton("three", 90, 50, false, nullptr);
+  displayController.addButton("one", 2, 50, DisplayLib::back);
+  displayController.addButton("two", 45, 50, nullptr);
+  displayController.addButton("three", 90, 50, nullptr);
 ```
 
 loop()
@@ -128,11 +127,10 @@ Analog button A and C both cycle between the digital buttons. The ```true``` par
 Checkboxes are the most advanced of the components, each checkbox automatically stores its value in a global array so it keeps its value inbetween screen switches. 
 
 
-A checkbox component has six parameters, 
+A checkbox component has five parameters, 
 - xPos
 - yPos
 - size
-- active
 - clicked
 - callback
 
@@ -144,19 +142,18 @@ A checkbox component has six parameters,
 
 **Size** X and Y size in pixels.
 
-**active** is whether the checkbox is active or not, it is recommended to only have one active component on the display at once.
-
 **clicked** is whether the checkbox has been clicked (crossed). Switches to TRUE once the flush function is called and a checkbox is active.
 
-**callback** is the name of the function that gets called when the checkbox is pressed. To call a function native to the library you must pass the library name with it, such as ```DisplayLib::back```. 
-If for some reason you dont need a callback then you can pass a null pointer as parameter instead. 
-You can also add lambda style callbacks so you can pass parameters through functions like here.
 
+**callback** is the name of the function that gets called when the button is pressed. To call a function you must pass it as a lambda function: 
 ```
-  displayController.addCheckbox(25, 30, 10, false, false, []() {
-    displayController.back();
+displayController.addButton("next", 90, 50, [](void) {
+      displayController.loadScreen("settings");
   });
 ```
+If for some reason you dont need a callback then you can pass a null pointer as parameter instead. 
+
+There are two requirements that have to be met before a callback runs, first the button with the callback must  be active & the ```flush()``` function has to be called.
 
 
 
@@ -170,9 +167,9 @@ Each screen is defined in the ```setup()``` part of the program. first you defin
 ```
 //  Home screen 
   displayController.addText("Hello, World!!", 10, 30);
-  displayController.addButton("one", 2, 50, true, DisplayLib::back);
-  displayController.addButton("two", 45, 50, false, nullptr);
-  displayController.addButton("next", 90, 50, false, [](void) {
+  displayController.addButton("one", 2, 50, DisplayLib::back);
+  displayController.addButton("two", 45, 50, nullptr);
+  displayController.addButton("next", 90, 50, [](void) {
       displayController.loadScreen("settings");
   });
   displayController.safeScreen("home");
@@ -180,17 +177,27 @@ Each screen is defined in the ```setup()``` part of the program. first you defin
 
   // Settings screen
   displayController.addText("Wow another page?", 10, 30);
-  displayController.addButton("Back", 2, 50, true, [](void) {
+  displayController.addButton("Back", 2, 50, [](void) {
       displayController.loadScreen("home");
   });
-  displayController.addButton("two", 45, 50, false, nullptr);
-  displayController.addButton("three", 90, 50, false, nullptr);
+  displayController.addButton("two", 45, 50, nullptr);
+  displayController.addButton("three", 90, 50, nullptr);
   displayController.safeScreen("settings");
 
   displayController.loadScreen("home");
 ```
 In this example two screens are made, the first screen gets the name ```home``` and is loaded at the end of the function.
 
+## Active components
+
+Each clickable component has a private attribute 'active'. By default the first clickable element on the screen is active (gets handled by loadScreen). To edit this you can pass the ID of a clickable through the parameters of loadscreen.
+
+```
+displayController.loadScreen("checks", 1);
+```
+In this example, the second clickable element on 'checks' screen gets active.
+
+When ```flush()``` is called the active component's callback gets triggered (or incase the active component is a checkbox, gets selected.)
 
 
 ## Handy functions
@@ -200,7 +207,9 @@ Each call to load screen adds the name of the a history vector. By calling the b
 
 Example
 ```
-  displayController.addButton("Go back", 2, 50, true, DisplayLib::back);
+  displayController.addButton("Go back", 2, 50, [](void){
+    displayController.back();
+  });
 ```
 
 ### Flush()
@@ -212,3 +221,15 @@ Example
     displayController.flush();
   } 
 ```
+
+
+### Settext()
+Settext() sets the text of a given identifier.
+
+```
+  displayController.addText("Hello, World!!", 10, 30, "change");
+  displayController.addButton("one", 2, 50, [](void){
+    displayController.setText("change", "Example of changing text");
+  });
+```
+In this example upon clicking button 'one' the text with identifier ```change``` switches to 'Example of changing text'
