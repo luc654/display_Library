@@ -108,19 +108,19 @@ void DisplayLib::setText(const char *identifier, const char *text, boolean all){
           
           // If not update all with identifier then return
           if (!all){
-            this->loadScreen(history.back().c_str(), elemId);
+            this->loadScreen(history.back().c_str(), elemId, false);
             return;
           }
         }
       }
     }
   }
-  this->loadScreen(history.back().c_str(), elemId);
+  this->loadScreen(history.back().c_str(), elemId, false);
   return;
 }
 
 
-void DisplayLib::addButton(const char *text, int xPos, int yPos, boolean active,
+void DisplayLib::addButton(const char *text, int xPos, int yPos,
                            void (*callback)()) {
   if (elementCount >= MAX_ELEMENTS)
     return;
@@ -129,13 +129,13 @@ void DisplayLib::addButton(const char *text, int xPos, int yPos, boolean active,
 
   screenElements[elementCount].type = BUTTON;
   screenElements[elementCount].data.buttonParams = btn;
-  screenElements[elementCount].active = active;
+  screenElements[elementCount].active = false;
   screenElements[elementCount].action = callback;
   screenElements[elementCount].id = elementCount;
 
   clickableElements[clickableCount].type = BUTTON;
   clickableElements[clickableCount].data.buttonParams = btn;
-  clickableElements[clickableCount].active = active;
+  clickableElements[clickableCount].active = false;
   clickableElements[clickableCount].action = callback;
   clickableElements[clickableCount].id = elementCount;
 
@@ -143,21 +143,20 @@ void DisplayLib::addButton(const char *text, int xPos, int yPos, boolean active,
   elementCount++;
 }
 
-void DisplayLib::addCheckbox(int xPos, int yPos, int size,
-                             boolean active, boolean clicked, void (*callback)()) {
+void DisplayLib::addCheckbox(int xPos, int yPos, int size, boolean clicked, void (*callback)()) {
   if (elementCount >= MAX_ELEMENTS)
     return;
   CheckParams checkbox = {xPos, yPos, size, clicked};
 
   screenElements[elementCount].type = CHECKBOX;
   screenElements[elementCount].data.checkParams = checkbox;
-  screenElements[elementCount].active = active;
+  screenElements[elementCount].active = false;
   screenElements[elementCount].action = callback;
   screenElements[elementCount].id = elementCount;
 
   clickableElements[clickableCount].type = CHECKBOX;
   clickableElements[clickableCount].data.checkParams = checkbox;
-  clickableElements[clickableCount].active = active;
+  clickableElements[clickableCount].active = false;
   clickableElements[clickableCount].action = callback;
   clickableElements[clickableCount].id = elementCount;
 
@@ -264,7 +263,7 @@ void DisplayLib::back() {
   this->loadScreen(name.c_str());
 }
 
-void DisplayLib::loadScreen(const char *name, int startPos) {
+void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag) {
   for (int i = 0; i < screenCount; i++) {
     if (strcmp(screens[i].name, name) == 0) {
       elementCount = screens[i].elementCount;
@@ -294,7 +293,10 @@ void DisplayLib::loadScreen(const char *name, int startPos) {
         }
       }
       
-      history.push_back(name);
+      if(historyFlag){
+        history.push_back(name);
+      }
+
       updateScreen();
       return;
     }
