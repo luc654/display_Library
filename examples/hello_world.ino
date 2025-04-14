@@ -23,9 +23,9 @@ void setup() {
   Serial.begin(9600);
   displayController.begin(); 
   displayController.addText("Hello, World!!", 10, 30);
-  displayController.addButton("one", 2, 50, true, DisplayLib::back);
-  displayController.addButton("two", 45, 50, false, nullptr);
-  displayController.addButton("three", 90, 50, false, nullptr);
+  displayController.addButton("one", 2, 50, nullptr);
+  displayController.addButton("two", 45, 50, nullptr);
+  displayController.addButton("three", 90, 50, nullptr);
 
 
   pinMode(BUTTON_A, INPUT_PULLUP);

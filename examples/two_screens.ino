@@ -25,9 +25,9 @@ void setup() {
 
 //  Home screen 
   displayController.addText("Hello, World!!", 10, 30);
-  displayController.addButton("one", 2, 50, true, nullptr);
-  displayController.addButton("two", 45, 50, false, nullptr);
-  displayController.addButton("next", 90, 50, false, [](void) {
+  displayController.addButton("one", 2, 50, nullptr);
+  displayController.addButton("two", 45, 50, nullptr);
+  displayController.addButton("next", 90, 50, [](void) {
       displayController.loadScreen("settings");
   });
   displayController.safeScreen("home");
@@ -35,11 +35,11 @@ void setup() {
 
   // settings screen
   displayController.addText("Wow another page?", 10, 30);
-  displayController.addButton("Back", 2, 50, true, []() {
+  displayController.addButton("Back", 2, 50, []() {
       displayController.back();
   });
-  displayController.addButton("two", 45, 50, false, nullptr);
-  displayController.addButton("three", 90, 50, false, nullptr);
+  displayController.addButton("two", 45, 50, nullptr);
+  displayController.addButton("three", 90, 50, nullptr);
   displayController.safeScreen("settings");
   delay(20);
 

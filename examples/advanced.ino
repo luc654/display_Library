@@ -31,8 +31,9 @@ void setup() {
   //  Home screen
   displayController.addText("Advanced controls", 0, 0);
   displayController.addText("A & C = sleep", 0, 20);
-  displayController.addButton("Example screen", 2, 50, true, [](void) {
-    displayController.loadScreen("checks");
+  displayController.addButton("Example screen", 2, 50, [](void) {
+    // '1' as parameter to set the second clickabe element as active
+    displayController.loadScreen("checks", 1);
   });
 
   displayController.safeScreen("home");
@@ -41,18 +42,17 @@ void setup() {
 
   // Checkbox screen
   displayController.addText("Back", 0, 10);
-  displayController.addButton("<", 30, 10, false, [](void) {
+  displayController.addButton("<", 30, 10,  [](void) {
     displayController.loadScreen("home");
   });
-  displayController.addCheckbox(10, 30, 10, true, false, nullptr);
-  displayController.addCheckbox(25, 30, 10, false, false, nullptr);
-  displayController.addCheckbox(40, 30, 10, false, false, nullptr);
-  displayController.addCheckbox(55, 30, 10, false, true, nullptr);
-  displayController.addCheckbox(70, 30, 20, false, true, nullptr);
+  displayController.addCheckbox(10, 30, 10, false, nullptr);
+  displayController.addCheckbox(25, 30, 10, false, nullptr);
+  displayController.addCheckbox(40, 30, 10, false, nullptr);
+  displayController.addCheckbox(55, 30, 10, true, nullptr);
+  displayController.addCheckbox(70, 30, 15, true, nullptr);
 
-  displayController.addText("Loads of checkboxes", 0, 40);
+  displayController.addText("Loads of checkboxes", 0, 50);
   displayController.safeScreen("checks");
-
 
 
 

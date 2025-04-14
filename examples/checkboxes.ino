@@ -25,10 +25,10 @@ void setup() {
 
 //  Home screen 
   displayController.addText("Finally, checkboxes", 0, 30);
-  displayController.addButton("checkboxes", 2, 50, true, [](void) {
+  displayController.addButton("checkboxes", 2, 50, [](void) {
       displayController.loadScreen("checks");
   });
-  displayController.addButton("settings", 65, 50, false, [](void) {
+  displayController.addButton("settings", 65, 50, [](void) {
       displayController.loadScreen("settings");
   });
   displayController.safeScreen("home");
@@ -36,23 +36,23 @@ void setup() {
 
   // Settings screen
   displayController.addText("nuthing here", 10, 30);
-  displayController.addButton("Back", 2, 50, true, []() {
+  displayController.addButton("Back", 2, 50, []() {
       displayController.back();
   });
-  displayController.addButton("two", 45, 50, false, nullptr);
-  displayController.addButton("three", 90, 50, false, nullptr);
+  displayController.addButton("two", 45, 50, nullptr);
+  displayController.addButton("three", 90, 50, nullptr);
   displayController.safeScreen("settings");
   delay(20);
 
   // Checkbox screen
   displayController.addText("Back", 30, 10);
-  displayController.addCheckbox(10, 30, 10, true, false, nullptr);
-  displayController.addCheckbox(25, 30, 10, false, false, []() {
+  displayController.addCheckbox(10, 30, 10, false, nullptr);
+  displayController.addCheckbox(25, 30, 10, false, []() {
     displayController.back();
   });
-  displayController.addCheckbox(40, 30, 10, false, false, nullptr);
-  displayController.addCheckbox(55, 30, 10, false, true, nullptr);
-  displayController.addCheckbox(70, 30, 20, false, true, nullptr);
+  displayController.addCheckbox(40, 30, 10, false, nullptr);
+  displayController.addCheckbox(55, 30, 10, true, nullptr);
+  displayController.addCheckbox(70, 30, 20, true, nullptr);
   displayController.safeScreen("checks");
 
 
