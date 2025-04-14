@@ -13,7 +13,7 @@ class DisplayLib {
     void flush();
     void safeScreen(const char* name);
     void resafeScreen(const char* name);
-    void loadScreen(const char* name);
+    void loadScreen(const char* name, int startPos = 0);
     void back();
 
     private:

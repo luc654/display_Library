@@ -86,6 +86,15 @@ void DisplayLib::addText(const char *text, int xPos, int yPos, const char *ident
 
 
 void DisplayLib::setText(const char *identifier, const char *text, boolean all){
+  int elemId;
+  // Get id of current active element
+  for(int i = 0; i < elementCount; i++){
+    if(screenElements[i].active){
+      // For some reason a minus one has to be applied
+      elemId  = screenElements[i].id - 1;
+    }
+  }
+
   // Loop through all screens
   for (int i = 0; i < screenCount; i++){
     // Loop through all elements in screen
@@ -95,18 +104,18 @@ void DisplayLib::setText(const char *identifier, const char *text, boolean all){
         // Check if element has given identifier
         if (strcmp(screens[i].screenElements[j].data.textParams.identifier, identifier) == 0){
           // Update text
-          Serial.println(identifier);
           screens[i].screenElements[j].data.textParams.text = text;
+          
           // If not update all with identifier then return
           if (!all){
-            this->loadScreen(history.back().c_str());
+            this->loadScreen(history.back().c_str(), elemId);
             return;
           }
         }
       }
     }
   }
-  this->loadScreen(history.back().c_str());
+  this->loadScreen(history.back().c_str(), elemId);
   return;
 }
 
@@ -251,10 +260,11 @@ void DisplayLib::back() {
 
   history.pop_back();
   const std::string &name = history.back();
+
   this->loadScreen(name.c_str());
 }
 
-void DisplayLib::loadScreen(const char *name) {
+void DisplayLib::loadScreen(const char *name, int startPos) {
   for (int i = 0; i < screenCount; i++) {
     if (strcmp(screens[i].name, name) == 0) {
       elementCount = screens[i].elementCount;
@@ -270,6 +280,12 @@ void DisplayLib::loadScreen(const char *name) {
       }
       
       for (int j = 0; j < clickableCount; j++) {
+        if(j == startPos){
+          Serial.println("_");
+          Serial.println(startPos);
+          Serial.println("|");
+          screenElements[screens[i].clickableElements[startPos].id].active = true;
+        }
         clickableElements[j] = screens[i].clickableElements[j];
       
         if (clickableElements[j].type == CHECKBOX) {
