@@ -16,6 +16,7 @@ struct TextParams {
   const char *text;
   int x;
   int y;  
+  const char *identifier;
 };
 
 struct ButtonParams {
@@ -33,6 +34,7 @@ struct CheckParams {
 
 
 struct DisplayElement {
+  int globId;
   int id;
   ElementType type;
   bool active;
@@ -72,15 +74,42 @@ DisplayLib::DisplayLib(Adafruit_SH1106G *displayObject) {
 // Public functions
 //
 
-void DisplayLib::addText(const char *text, int xPos, int yPos) {
+void DisplayLib::addText(const char *text, int xPos, int yPos, const char *identifier) {
   if (elementCount >= MAX_ELEMENTS)
     return;
 
   screenElements[elementCount].type = TEXT;
-  screenElements[elementCount].data.textParams = {text, xPos, yPos};
+  screenElements[elementCount].data.textParams = {text, xPos, yPos, identifier};
   screenElements[elementCount].id = elementCount;
   elementCount++;
 }
+
+
+void DisplayLib::setText(const char *identifier, const char *text, boolean all){
+  // Loop through all screens
+  for (int i = 0; i < screenCount; i++){
+    // Loop through all elements in screen
+    for(int j = 0; j < screens[i].elementCount; j++){
+      // Check each element if type is text
+      if(screens[i].screenElements[j].type == TEXT){
+        // Check if element has given identifier
+        if (strcmp(screens[i].screenElements[j].data.textParams.identifier, identifier) == 0){
+          // Update text
+          Serial.println(identifier);
+          screens[i].screenElements[j].data.textParams.text = text;
+          // If not update all with identifier then return
+          if (!all){
+            this->loadScreen(history.back().c_str());
+            return;
+          }
+        }
+      }
+    }
+  }
+  this->loadScreen(history.back().c_str());
+  return;
+}
+
 
 void DisplayLib::addButton(const char *text, int xPos, int yPos, boolean active,
                            void (*callback)()) {

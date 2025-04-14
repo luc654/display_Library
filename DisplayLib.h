@@ -4,7 +4,8 @@ class DisplayLib {
   public:
     DisplayLib(Adafruit_SH1106G* displayObject); 
     void begin();
-    void addText(const char* text, int xPos, int yPos);
+    void addText(const char* text, int xPos, int yPos, const char* identifier="");
+    void setText(const char* identifier, const char* text, boolean all=true);
     void addButton(const char* text, int xPos, int yPos, boolean active, void(*new_action)());
     void addCheckbox(int xPos, int yPos, int size, boolean active, boolean clicked, void(*new_action)());
     void cycle(boolean cycle);
