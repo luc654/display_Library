@@ -168,19 +168,13 @@ void DisplayLib::addCheckbox(int xPos, int yPos, int size, boolean clicked, void
   elementCount++;
 }
 
-void DisplayLib::addList(int xPos, int yPos, int itemSpacing, std::vector<const char*> textList){
-    
+void DisplayLib::addList(int xPos, int yPos, int itemSpacing, std::vector<const char*> textList){    
   // loop through each iteration of own list
   int yyPos = yPos;
   for (int i = 0; i < textList.size(); i++){
     addText(textList[i], xPos, yyPos);
-
     yyPos = yyPos + itemSpacing;
   }
-
-  // add text and add 
-
-
 }
 
 void DisplayLib::begin() {
@@ -319,6 +313,11 @@ void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag)
 
   // fallback
   updateScreen();
+}
+
+std::string DisplayLib::screenName() {
+  if (history.empty()) return "";
+  return history.back();
 }
 
 

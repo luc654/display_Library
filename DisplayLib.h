@@ -16,6 +16,7 @@ class DisplayLib {
     void safeScreen(const char* name);
     void resafeScreen(const char* name);
     void loadScreen(const char* name, int startPos = 0, boolean historyFlag = true);
+    std::string screenName();
     void back();
 
     private:
