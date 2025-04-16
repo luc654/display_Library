@@ -40,6 +40,8 @@ void loop() {
 
 Each component has different parameters. There are currently three components, text, buttons and checkboxes. 
 
+There are also [lists](#lists) that store these components, these lists are usefull for quicker styling and nicer code reading.
+
 ### Text
 
 A text component has four parameters, 
@@ -199,6 +201,71 @@ In this example, the second clickable element on 'checks' screen gets active.
 
 When ```flush()``` is called the active component's callback gets triggered (or incase the active component is a checkbox, gets selected.)
 
+
+### Lists
+A list is a collection of either buttons or text components, by passing a vector with the necessary parameters into an addList function and a few coordinates and a boolean of direction you can implement a list.
+
+## Text list
+To initialise a text list first make a vector of ```const char *```
+
+```
+std::vector<const char *> textList = { "One", "Two", "Three"};
+```
+
+Each element in the vector will be its own component.
+Currently the change parameter isnt supported in text objects. This is on the todo list.
+
+
+In the setup function call the addList function with the following parameters
+
+**X position** in pixels
+**Y position** in pixels
+**Spacing** in pixels
+**downwards** list direction, true = downwards, false = sideways
+**vector** text vector of const * char
+
+```
+void setup() {
+  Serial.begin(9600);
+  dC.begin();
+  dC.addList(2,15,15, false, textList);
+```
+
+## Button list
+To initialise a text list first make a vector of ```ButtonDef```. ButtonDef is a custom struct stored in the header file, it contains a ```const char*``` which contains the button text and a ```void (*callback)()``` which is ofcourse the callback of te button.
+
+```
+std::vector<ButtonDef> btnList = {
+  {"Home", []() {
+    dC.loadScreen("home");
+  }},
+    {"Sleep", []() {
+    dC.loadScreen("sleep");
+  }},
+    {"Settings", []() {
+    dC.loadScreen("Settings");
+  }}
+};
+```
+
+Here I define a vector with three buttons, each button loads another screen. Each element in the vector will be its own button.
+
+In the setup function call the addList function with the following parameters
+
+**X position** in pixels
+**Y position** in pixels
+**Spacing** in pixels
+**downwards** list direction, true = downwards, false = sideways
+**vector** text vector of const * char
+
+```
+void setup() {
+  Serial.begin(9600);
+  dC.begin();
+  dC.addBtnList( 2,50,5,false, btnList);
+```
+
+When setting direction to false (direcion sideways) the function will automatically space the buttons enough to ensure no overlap. THis means that spacing really means spacing.
 
 ## Handy functions
 
