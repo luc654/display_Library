@@ -168,12 +168,38 @@ void DisplayLib::addCheckbox(int xPos, int yPos, int size, boolean clicked, void
   elementCount++;
 }
 
-void DisplayLib::addList(int xPos, int yPos, int itemSpacing, std::vector<const char*> textList){    
-  // loop through each iteration of own list
-  int yyPos = yPos;
-  for (int i = 0; i < textList.size(); i++){
-    addText(textList[i], xPos, yyPos);
-    yyPos = yyPos + itemSpacing;
+void DisplayLib::addList(int xPos, int yPos, int itemSpacing, boolean downwards, std::vector<const char*> textList){    
+  
+  if (downwards){
+    int yyPos = yPos;
+    for (int i = 0; i < textList.size(); i++){
+      addText(textList[i], xPos, yyPos);
+      yyPos = yyPos + itemSpacing;
+    }
+  } else {
+    int xxPos = xPos;
+    for (int i = 0; i < textList.size(); i++) {
+      addText(textList[i], xxPos, yPos);
+      xxPos += itemSpacing;
+      xxPos += (strlen(textList[i]) * 6);
+    }
+  }
+}
+
+void DisplayLib::addBtnList(int xPos, int yPos, int itemSpacing, boolean downwards, std::vector<ButtonDef> btnList) {
+  if (downwards) {
+    for (int i = 0; i < btnList.size(); i++) {
+      addButton(btnList[i].label, xPos, yPos + i * itemSpacing, btnList[i].callback);
+
+    }
+  } else {
+    int xxPos = xPos;
+    for (int i = 0; i < btnList.size(); i++) {
+      addButton(btnList[i].label, xxPos, yPos, btnList[i].callback);
+      xxPos += itemSpacing;
+      xxPos += (strlen(btnList[i].label) * 6) + 4 ;
+
+    }
   }
 }
 

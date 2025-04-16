@@ -1,6 +1,11 @@
 #include <Adafruit_SH110X.h> 
 #include <vector>
 
+struct ButtonDef {
+  const char* label;
+  void (*callback)();
+};
+
 class DisplayLib {
   public:
     DisplayLib(Adafruit_SH1106G* displayObject); 
@@ -9,7 +14,8 @@ class DisplayLib {
     void setText(const char* identifier, const char* text, boolean all=true);
     void addButton(const char* text, int xPos, int yPos, void(*new_action)());
     void addCheckbox(int xPos, int yPos, int size, boolean clicked, void(*new_action)());
-    void addList(int xPos, int yPos, int itemSpacing, std::vector<const char*> textList);
+    void addList(int xPos, int yPos, int itemSpacing, boolean downwards, std::vector<const char*> textList);
+    void addBtnList(int xPos, int yPos, int itemSpacing, boolean downwards, std::vector<ButtonDef> btnList);
     void cycle(boolean cycle);
     void updateScreen();
     void flush();
