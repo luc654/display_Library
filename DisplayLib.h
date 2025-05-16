@@ -1,5 +1,6 @@
 #include <Adafruit_SH110X.h> 
 #include <vector>
+#include <string>
 
 struct ButtonDef {
   const char* label;
@@ -14,8 +15,8 @@ class DisplayLib {
     void setText(const char* identifier, const char* text, boolean all=true);
     void addButton(const char* text, int xPos, int yPos, void(*new_action)());
     void addCheckbox(int xPos, int yPos, int size, boolean clicked, void(*new_action)());
-    void addList(int xPos, int yPos, int itemSpacing, boolean downwards, std::vector<const char*> textList);
-    void addBtnList(int xPos, int yPos, int itemSpacing, boolean downwards, std::vector<ButtonDef> btnList);
+    void addList(int xPos, int yPos, int itemSpacing, boolean downwards, std::string textList[], int listSize);
+    void addBtnList(int xPos, int yPos, int itemSpacing, boolean downwards, ButtonDef btnList[], int listSize);
     void cycle(boolean cycle);
     void updateScreen();
     void flush();
@@ -27,6 +28,9 @@ class DisplayLib {
 
     private:
     Adafruit_SH1106G* _display; 
+    void addHistory(std::string name);
+    void historyPop();
+    std::string historyBack();
     void showText(const char* text, int xPos, int yPos);
     void showButton(const char* text, int xPos, int yPos, boolean active);
     void showCheckbox(int xPos, int yPos, int size, boolean clicked, boolean active);

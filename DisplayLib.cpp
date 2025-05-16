@@ -8,6 +8,8 @@
 #define MAX_ELEMENTS 10
 #define MAX_SCREENS 10
 
+#define MAX_HISTORY 10
+
 bool checkboxStates[MAX_ELEMENTS] = {false};
 
 enum ElementType { TEXT, BUTTON, CHECKBOX };
@@ -49,8 +51,8 @@ struct DisplayElement {
 
 DisplayElement screenElements[MAX_ELEMENTS];
 DisplayElement clickableElements[MAX_ELEMENTS];
-std::vector<std::string> history;
-
+std::string history[MAX_HISTORY];
+int historyIndex = 0;
 
 struct ScreenLoaded {
   const char *name;
@@ -90,8 +92,8 @@ void DisplayLib::setText(const char *identifier, const char *text, boolean all){
   // Get id of current active element
   for(int i = 0; i < elementCount; i++){
     if(screenElements[i].active){
-      // For some reason a minus one has to be applied
-      elemId  = screenElements[i].id - 1;
+      elemId  = screenElements[i].id;
+      Serial.println("Selected> " + elemId);
     }
   }
 
@@ -108,14 +110,14 @@ void DisplayLib::setText(const char *identifier, const char *text, boolean all){
           
           // If not update all with identifier then return
           if (!all){
-            this->loadScreen(history.back().c_str(), elemId, false);
+            this->loadScreen(historyBack().c_str(), elemId, false);
             return;
           }
         }
       }
     }
   }
-  this->loadScreen(history.back().c_str(), elemId, false);
+  this->loadScreen(historyBack().c_str(), elemId, false);
   return;
 }
 
@@ -144,8 +146,7 @@ void DisplayLib::addButton(const char *text, int xPos, int yPos,
 }
 
 void DisplayLib::addCheckbox(int xPos, int yPos, int size, boolean clicked, void (*callback)()) {
-  if (elementCount >= MAX_ELEMENTS)
-    return;
+  if (elementCount >= MAX_ELEMENTS) return;
   CheckParams checkbox = {xPos, yPos, size, clicked};
 
   screenElements[elementCount].type = CHECKBOX;
@@ -168,33 +169,32 @@ void DisplayLib::addCheckbox(int xPos, int yPos, int size, boolean clicked, void
   elementCount++;
 }
 
-void DisplayLib::addList(int xPos, int yPos, int itemSpacing, boolean downwards, std::vector<const char*> textList){    
-  
-  if (downwards){
+void DisplayLib::addList(int xPos, int yPos, int itemSpacing, bool downwards, std::string textList[], int listSize) {
+  if (downwards) {
     int yyPos = yPos;
-    for (int i = 0; i < textList.size(); i++){
-      addText(textList[i], xPos, yyPos);
-      yyPos = yyPos + itemSpacing;
+    for (int i = 0; i < listSize; i++) {
+      addText(textList[i].c_str(), xPos, yyPos);
+      yyPos += itemSpacing;
     }
   } else {
     int xxPos = xPos;
-    for (int i = 0; i < textList.size(); i++) {
-      addText(textList[i], xxPos, yPos);
+    for (int i = 0; i < listSize; i++) {
+      addText(textList[i].c_str(), xxPos, yPos);
       xxPos += itemSpacing;
-      xxPos += (strlen(textList[i]) * 6);
+      xxPos += (textList[i].length() * 6);
     }
   }
 }
 
-void DisplayLib::addBtnList(int xPos, int yPos, int itemSpacing, boolean downwards, std::vector<ButtonDef> btnList) {
+void DisplayLib::addBtnList(int xPos, int yPos, int itemSpacing, boolean downwards, ButtonDef btnList[], int listSize) {
   if (downwards) {
-    for (int i = 0; i < btnList.size(); i++) {
+    for (int i = 0; i < listSize; i++) {
       addButton(btnList[i].label, xPos, yPos + i * itemSpacing, btnList[i].callback);
 
     }
   } else {
     int xxPos = xPos;
-    for (int i = 0; i < btnList.size(); i++) {
+    for (int i = 0; i < listSize; i++) {
       addButton(btnList[i].label, xxPos, yPos, btnList[i].callback);
       xxPos += itemSpacing;
       xxPos += (strlen(btnList[i].label) * 6) + 4 ;
@@ -242,8 +242,7 @@ void DisplayLib::flush() {
 
       if (screenElements[id].type == CHECKBOX) {
         checkboxStates[id] = !checkboxStates[id]; 
-      
-  
+      Serial.println("Clicked> " + id);
         screenElements[id].data.checkParams.clicked = checkboxStates[id];
         clickableElements[i].data.checkParams.clicked = checkboxStates[id];
       }
@@ -288,12 +287,12 @@ void DisplayLib::safeScreen(const char *name) {
 
 
 void DisplayLib::back() {
-  if (history.size() < 2) {
+  if ((sizeof(history) / sizeof(history[0])) < 2) {
     return;
   }
 
-  history.pop_back();
-  const std::string &name = history.back();
+  historyPop();
+  const std::string &name = historyBack();
 
   this->loadScreen(name.c_str());
 }
@@ -315,9 +314,8 @@ void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag)
       
       for (int j = 0; j < clickableCount; j++) {
         if(j == startPos){
-          Serial.println("_");
-          Serial.println(startPos);
-          Serial.println("|");
+          Serial.println("Thing> " + startPos);
+
           screenElements[screens[i].clickableElements[startPos].id].active = true;
         }
         clickableElements[j] = screens[i].clickableElements[j];
@@ -329,7 +327,8 @@ void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag)
       }
       
       if(historyFlag){
-        history.push_back(name);
+        
+        addHistory(name);
       }
 
       updateScreen();
@@ -342,8 +341,7 @@ void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag)
 }
 
 std::string DisplayLib::screenName() {
-  if (history.empty()) return "";
-  return history.back();
+  return historyBack().c_str();
 }
 
 
@@ -352,7 +350,28 @@ std::string DisplayLib::screenName() {
 // Private functions
 //
 
+
+
+void DisplayLib::addHistory(std::string name){
+  historyIndex++;
+  if(historyIndex > MAX_HISTORY){
+    historyIndex = 0;
+  } 
+  history[historyIndex] = name;
+}
+
+std::string DisplayLib::historyBack(){
+  return history[historyIndex];
+}
+void DisplayLib::historyPop(){
+  historyIndex--;
+  if(historyIndex < 0){
+    historyIndex = MAX_ELEMENTS;
+  }
+}
 void DisplayLib::showText(const char *text, int xPos, int yPos) {
+  Serial.print("Setting text: ");
+  Serial.println(text);
   _display->setCursor(xPos, yPos);
   _display->println(text);
 }
