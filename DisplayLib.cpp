@@ -92,7 +92,6 @@ void DisplayLib::setText(const char *identifier, const char *text, boolean all){
   for(int i = 0; i < elementCount; i++){
     if(screenElements[i].active){
       elemId  = screenElements[i].id;
-      Serial.println("Selected> " + elemId);
     }
   }
 
@@ -241,7 +240,6 @@ void DisplayLib::flush() {
 
       if (screenElements[id].type == CHECKBOX) {
         checkboxStates[id] = !checkboxStates[id]; 
-      Serial.println("Clicked> " + id);
         screenElements[id].data.checkParams.clicked = checkboxStates[id];
         clickableElements[i].data.checkParams.clicked = checkboxStates[id];
       }
@@ -301,7 +299,10 @@ void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag)
     if (strcmp(screens[i].name, name) == 0) {
       elementCount = screens[i].elementCount;
       clickableCount = screens[i].clickableCount;
-
+      if(startPos > clickableCount){
+        startPos = 0;
+      }
+      
       for (int j = 0; j < elementCount; j++) {
         screenElements[j] = screens[i].screenElements[j];
       
@@ -313,7 +314,6 @@ void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag)
       
       for (int j = 0; j < clickableCount; j++) {
         if(j == startPos){
-          Serial.println("Thing> " + startPos);
 
           screenElements[screens[i].clickableElements[startPos].id].active = true;
         }
@@ -325,8 +325,7 @@ void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag)
         }
       }
       
-      if(historyFlag){
-        
+      if(historyFlag){ 
         addHistory(name);
       }
 
@@ -369,7 +368,6 @@ void DisplayLib::historyPop(){
   }
 }
 void DisplayLib::showText(const char *text, int xPos, int yPos) {
-  Serial.println(text);
   _display->setCursor(xPos, yPos);
   _display->println(text);
 }
@@ -408,13 +406,18 @@ void DisplayLib::showCheckbox(int xPos, int yPos, int size, boolean active, bool
 }
 
 void DisplayLib::updateScreen() {
+  Serial.println("1");
   _display->clearDisplay();
-
+  Serial.println("2");
+  
   for (int i = 0; i < elementCount; i++) {
+    Serial.println("3");
     handleElement(screenElements[i]);
   }
-
+  
+  Serial.println("4");
   _display->display();
+  Serial.println("5");
 }
 
 void DisplayLib::handleElement(DisplayElement el) {
