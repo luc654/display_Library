@@ -369,7 +369,6 @@ void DisplayLib::historyPop(){
   }
 }
 void DisplayLib::showText(const char *text, int xPos, int yPos) {
-  Serial.print("Setting text: ");
   Serial.println(text);
   _display->setCursor(xPos, yPos);
   _display->println(text);
