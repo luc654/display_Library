@@ -30,6 +30,10 @@ void setup() {
   pinMode(BUTTON_A, INPUT_PULLUP);
   pinMode(BUTTON_B, INPUT_PULLUP);
   pinMode(BUTTON_C, INPUT_PULLUP);
+
+
+  displayController.safeScreen("Home");
+  displayController.loadScreen("Home");
 }
 
 void loop() {

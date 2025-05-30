@@ -28,6 +28,9 @@ void setup() {
   displayController.addButton("three", 90, 50, nullptr);
 
 
+  displayController.safeScreen("Home");
+  displayController.loadScreen("Home");
+
   pinMode(BUTTON_A, INPUT_PULLUP);
   pinMode(BUTTON_B, INPUT_PULLUP);
   pinMode(BUTTON_C, INPUT_PULLUP);
