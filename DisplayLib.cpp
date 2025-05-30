@@ -406,18 +406,13 @@ void DisplayLib::showCheckbox(int xPos, int yPos, int size, boolean active, bool
 }
 
 void DisplayLib::updateScreen() {
-  Serial.println("1");
   _display->clearDisplay();
-  Serial.println("2");
   
   for (int i = 0; i < elementCount; i++) {
-    Serial.println("3");
     handleElement(screenElements[i]);
   }
   
-  Serial.println("4");
   _display->display();
-  Serial.println("5");
 }
 
 void DisplayLib::handleElement(DisplayElement el) {
