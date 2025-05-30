@@ -3,7 +3,6 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
 #include <string>
-#include <vector>
 
 #define MAX_ELEMENTS 10
 #define MAX_SCREENS 10

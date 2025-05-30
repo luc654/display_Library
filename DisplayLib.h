@@ -1,5 +1,4 @@
 #include <Adafruit_SH110X.h> 
-#include <vector>
 #include <string>
 
 struct ButtonDef {
