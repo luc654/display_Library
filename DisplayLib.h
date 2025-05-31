@@ -14,7 +14,7 @@ class DisplayLib {
     void setText(const char* identifier, const char* text, boolean all=true);
     void addButton(const char* text, int xPos, int yPos, void(*new_action)());
     void addCheckbox(int xPos, int yPos, int size, boolean clicked, void(*new_action)());
-    void addList(int xPos, int yPos, int itemSpacing, boolean downwards, std::string textList[], int listSize);
+    void addList(int xPos, int yPos, int itemSpacing, boolean downwards, std::string textList[], int listSize, boolean identifier=false);
     void addBtnList(int xPos, int yPos, int itemSpacing, boolean downwards, ButtonDef btnList[], int listSize);
     void cycle(boolean cycle);
     void updateScreen();

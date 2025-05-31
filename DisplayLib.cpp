@@ -167,11 +167,15 @@ void DisplayLib::addCheckbox(int xPos, int yPos, int size, boolean clicked, void
   elementCount++;
 }
 
-void DisplayLib::addList(int xPos, int yPos, int itemSpacing, bool downwards, std::string textList[], int listSize) {
+void DisplayLib::addList(int xPos, int yPos, int itemSpacing, bool downwards, std::string textList[], int listSize, bool identifier) {
   if (downwards) {
     int yyPos = yPos;
     for (int i = 0; i < listSize; i++) {
-      addText(textList[i].c_str(), xPos, yyPos);
+      if(identifier){
+        addText(textList[i].c_str(), xPos, yyPos, textList[i++].c_str());
+      } else {
+        addText(textList[i].c_str(), xPos, yyPos);
+      }
       yyPos += itemSpacing;
     }
   } else {
