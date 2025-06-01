@@ -203,16 +203,16 @@ When ```flush()``` is called the active component's callback gets triggered (or 
 
 
 ### Lists
-A list is a collection of either buttons or text components, by passing a vector with the necessary parameters into an addList function and a few coordinates and a boolean of direction you can implement a list.
+A list is a collection of either buttons or text components, by passing an array with the necessary parameters into an addList function and a few coordinates and a boolean of direction you can implement a list.
 
 ## Text list
-To initialise a text list first make a vector of ```const char *```
+To initialise a text list first make an array of ```const char *```
 
 ```
-std::vector<const char *> textList = { "One", "Two", "Three"};
+const char* textList[] = { "One", "Two", "Three" };
 ```
 
-Each element in the vector will be its own component.
+Each element in the array will be its own component.
 Currently the change parameter isnt supported in text objects. This is on the todo list.
 
 
@@ -222,7 +222,7 @@ In the setup function call the addList function with the following parameters
 **Y position** in pixels
 **Spacing** in pixels
 **downwards** list direction, true = downwards, false = sideways
-**vector** text vector of const * char
+**array** text array of const * char
 
 ```
 void setup() {
@@ -232,10 +232,10 @@ void setup() {
 ```
 
 ## Button list
-To initialise a text list first make a vector of ```ButtonDef```. ButtonDef is a custom struct stored in the header file, it contains a ```const char*``` which contains the button text and a ```void (*callback)()``` which is ofcourse the callback of te button.
+To initialise a text list first make an array of ```ButtonDef```. ButtonDef is a custom struct stored in the header file, it contains a ```const char*``` which contains the button text and a ```void (*callback)()``` which is ofcourse the callback of te button.
 
 ```
-std::vector<ButtonDef> btnList = {
+ButtonDef btnList[3] = {
   {"Home", []() {
     dC.loadScreen("home");
   }},
@@ -248,7 +248,7 @@ std::vector<ButtonDef> btnList = {
 };
 ```
 
-Here I define a vector with three buttons, each button loads another screen. Each element in the vector will be its own button.
+Here I define an array with three buttons, each button loads another screen. Each element in the array will be its own button.
 
 In the setup function call the addList function with the following parameters
 
@@ -256,7 +256,7 @@ In the setup function call the addList function with the following parameters
 **Y position** in pixels
 **Spacing** in pixels
 **downwards** list direction, true = downwards, false = sideways
-**vector** text vector of const * char
+**array** text array of const * char
 
 ```
 void setup() {
@@ -270,7 +270,7 @@ When setting direction to false (direcion sideways) the function will automatica
 ## Handy functions
 
 ### Back()
-Each call to load screen adds the name of the a history vector. By calling the back() function the latest entry in the history vector gets destroyed and the previous entry is called as parameter to the ```loadScreen(name)``` function.
+Each call to load screen adds the name of the a history array. By calling the back() function the latest entry in the history array gets destroyed and the previous entry is called as parameter to the ```loadScreen(name)``` function.
 
 Example
 ```
