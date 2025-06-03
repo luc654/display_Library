@@ -79,6 +79,11 @@ void DisplayLib::addText(const char *text, int xPos, int yPos, const char *ident
   if (elementCount >= MAX_ELEMENTS)
     return;
 
+  
+  if (text == nullptr || text[0] == '\0') {
+    text = " ";
+}
+
   screenElements[elementCount].type = TEXT;
   screenElements[elementCount].data.textParams = {text, xPos, yPos, identifier};
   screenElements[elementCount].id = elementCount;
@@ -373,6 +378,7 @@ void DisplayLib::historyPop(){
 }
 void DisplayLib::showText(const char *text, int xPos, int yPos) {
   _display->setCursor(xPos, yPos);
+
   _display->println(text);
 }
 
