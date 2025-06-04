@@ -242,7 +242,7 @@ void DisplayLib::cycle(boolean forward) {
       
       screenElements[nextId].active = true;
       screenElements[id].active = false;
-      Serial.println(nextId);
+      // Serial.println(nextId);
       prevActive = nextId;
       break;
     }
@@ -255,8 +255,8 @@ void DisplayLib::flush() {
   for (int i = 0; i < clickableCount; i++) {
     int id = clickableElements[i].id;
     if (screenElements[id].active) {
-      Serial.print("D ");
-      Serial.println(id);
+      // Serial.print("D ");
+      // Serial.println(id);
       if (screenElements[id].type == CHECKBOX) {
         checkboxStates[id] = !checkboxStates[id]; 
         screenElements[id].data.checkParams.clicked = checkboxStates[id];
@@ -314,8 +314,8 @@ void DisplayLib::back() {
 }
 
 void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag) {
-  Serial.print("Setting on: ");
-  Serial.println(startPos);
+  // Serial.print("Setting on: ");
+  // Serial.println(startPos);
   for (int i = 0; i < screenCount; i++) {
     if (strcmp(screens[i].name, name) == 0) {
       elementCount = screens[i].elementCount;
@@ -329,31 +329,39 @@ void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag)
           screenElements[j].data.checkParams.clicked = checkboxStates[id];
         }
       }
+      if(startPos > elementCount){
+        startPos =screens[i].clickableElements[0].id;
+        // Serial.printf("Startpos %d higher then element count %d \n", startPos, elementCount);
+      }
       
       if(startPos == 0){
         startPos = screens[i].clickableElements[0].id;
       } 
       for (int j = 0; j < clickableCount; j++) {
-        Serial.printf("Setting %d trying %d \n", screens[i].clickableElements[j].id, startPos);
+  // Serial.printf("Setting %d trying %d\n",
+  //               screens[i].clickableElements[j].id,
+  //               startPos);
 
-          if(screens[i].clickableElements[j].id == startPos){
-            int targetId = screens[i].clickableElements[j].id;
-            for (int k = 0; k < elementCount; k++) {
-                if (screenElements[k].id == targetId) {
-                  screenElements[k].active = true;
-                break;
-                }
-              }
-
-          }
-        
-        clickableElements[j] = screens[i].clickableElements[j];
-      
-        if (clickableElements[j].type == CHECKBOX) {
-          int id = clickableElements[j].id;
-          clickableElements[j].data.checkParams.clicked = checkboxStates[id];
-        }
+  if (screens[i].clickableElements[j].id == startPos) {
+    // Found the clickable‐element whose .id matches startPos:
+    int targetId = screens[i].clickableElements[j].id;
+    // Now find the matching element in screenElements[] by .id:
+    for (int k = 0; k < elementCount; k++) {
+      if (screenElements[k].id == targetId) {
+        screenElements[k].active = true;
+        break;
       }
+    }
+  }
+
+  // Copy the clickableElements[j] into your local clickableElements[]
+  clickableElements[j] = screens[i].clickableElements[j];
+  if (clickableElements[j].type == CHECKBOX) {
+    int id = clickableElements[j].id;
+    clickableElements[j].data.checkParams.clicked = checkboxStates[id];
+  }
+}
+
       
       if(historyFlag){ 
         addHistory(name);
