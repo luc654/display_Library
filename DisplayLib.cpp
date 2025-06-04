@@ -211,16 +211,10 @@ void DisplayLib::addBtnList(int xPos, int yPos, int itemSpacing, boolean downwar
 }
 
 void DisplayLib::begin() {
-  Serial.println("VV");
-  
   _display->begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  Serial.println("YY");
   _display->clearDisplay();
-  Serial.println("XX");
   _display->setTextSize(1);
-  Serial.println("OO");
   _display->setTextColor(SSD1306_WHITE);
-  Serial.println("PP");
 }
 
 void DisplayLib::cycle(boolean forward) {
@@ -310,7 +304,6 @@ void DisplayLib::back() {
 }
 
 void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag) {
-  Serial.println("aa");
   for (int i = 0; i < screenCount; i++) {
     if (strcmp(screens[i].name, name) == 0) {
       elementCount = screens[i].elementCount;
@@ -385,7 +378,6 @@ void DisplayLib::historyPop(){
 }
 void DisplayLib::showText(const char *text, int xPos, int yPos) {
   _display->setCursor(xPos, yPos);
-  Serial.printf("Showing text %s \n", text);
   _display->println(text);
 }
 
