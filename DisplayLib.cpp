@@ -67,6 +67,7 @@ int elementCount = 0;
 int clickableCount = 0;
 int screenCount = 0;
 int activeScreenIndex = -1;
+int prevActive;
 
 DisplayLib::DisplayLib(Adafruit_SSD1306 *displayObject) {
   _display = displayObject;
@@ -98,10 +99,10 @@ void DisplayLib::setText(const char *identifier, const char *text, boolean all){
   for(int i = 0; i < elementCount; i++){
     if(screenElements[i].active){
       elemId  = screenElements[i].id;
+      elemId++;
     }
   }
 
-  Serial.println(activeScreenIndex);
   // Loop through all screens
   for (int i = 0; i < screenCount; i++){
     // Loop through all elements in screen
@@ -119,14 +120,14 @@ void DisplayLib::setText(const char *identifier, const char *text, boolean all){
           
           // If not update all with identifier then return
           if (!all){
-            this->loadScreen(historyBack().c_str(), elemId, false);
+            this->loadScreen(historyBack().c_str(), prevActive, false);
             return;
           }
         }
       }
     }
   }
-  this->loadScreen(historyBack().c_str(), elemId, false);
+  this->loadScreen(historyBack().c_str(), prevActive, false);
   return;
 }
 
@@ -232,15 +233,17 @@ void DisplayLib::cycle(boolean forward) {
   for (int i = 0; i < clickableCount; i++) {
     DisplayElement currElement = clickableElements[i];
     int id = currElement.id;
-
+    
     if (screenElements[id].active) {
       int nextIndex = forward ? (i + 1) % clickableCount
-                              : (i == 0 ? clickableCount - 1 : i - 1);
-
+      : (i == 0 ? clickableCount - 1 : i - 1);
+      
       int nextId = clickableElements[nextIndex].id;
-
+      
       screenElements[nextId].active = true;
       screenElements[id].active = false;
+      Serial.println(nextId);
+      prevActive = nextId;
       break;
     }
   }
@@ -252,7 +255,8 @@ void DisplayLib::flush() {
   for (int i = 0; i < clickableCount; i++) {
     int id = clickableElements[i].id;
     if (screenElements[id].active) {
-
+      Serial.print("D ");
+      Serial.println(id);
       if (screenElements[id].type == CHECKBOX) {
         checkboxStates[id] = !checkboxStates[id]; 
         screenElements[id].data.checkParams.clicked = checkboxStates[id];
@@ -310,13 +314,12 @@ void DisplayLib::back() {
 }
 
 void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag) {
+  Serial.print("Setting on: ");
+  Serial.println(startPos);
   for (int i = 0; i < screenCount; i++) {
     if (strcmp(screens[i].name, name) == 0) {
       elementCount = screens[i].elementCount;
       clickableCount = screens[i].clickableCount;
-      if(startPos > clickableCount){
-        startPos = 0;
-      }
       activeScreenIndex = i;
       for (int j = 0; j < elementCount; j++) {
         screenElements[j] = screens[i].screenElements[j];
@@ -327,11 +330,23 @@ void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag)
         }
       }
       
+      if(startPos == 0){
+        startPos = screens[i].clickableElements[0].id;
+      } 
       for (int j = 0; j < clickableCount; j++) {
-        if(j == startPos){
+        Serial.printf("Setting %d trying %d \n", screens[i].clickableElements[j].id, startPos);
 
-          screenElements[screens[i].clickableElements[startPos].id].active = true;
-        }
+          if(screens[i].clickableElements[j].id == startPos){
+            int targetId = screens[i].clickableElements[j].id;
+            for (int k = 0; k < elementCount; k++) {
+                if (screenElements[k].id == targetId) {
+                  screenElements[k].active = true;
+                break;
+                }
+              }
+
+          }
+        
         clickableElements[j] = screens[i].clickableElements[j];
       
         if (clickableElements[j].type == CHECKBOX) {
@@ -446,4 +461,3 @@ void DisplayLib::handleElement(DisplayElement el) {
     break;
   }
 }
-
