@@ -1,4 +1,4 @@
-#include <Adafruit_SH110X.h> 
+#include <Adafruit_SSD1306.h> 
 #include <string>
 
 struct ButtonDef {
@@ -8,7 +8,7 @@ struct ButtonDef {
 
 class DisplayLib {
   public:
-    DisplayLib(Adafruit_SH1106G* displayObject); 
+    DisplayLib(Adafruit_SSD1306* displayObject); 
     void begin();
     void addText(const char* text, int xPos, int yPos, const char* identifier="");
     void setText(const char* identifier, const char* text, boolean all=true);
@@ -26,7 +26,7 @@ class DisplayLib {
     void back();
 
     private:
-    Adafruit_SH1106G* _display; 
+    Adafruit_SSD1306* _display; 
     void addHistory(std::string name);
     void historyPop();
     std::string historyBack();

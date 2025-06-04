@@ -1,7 +1,7 @@
 #include "DisplayLib.h"
 #include "Arduino.h"
 #include <Adafruit_GFX.h>
-#include <Adafruit_SH110X.h>
+#include <Adafruit_SSD1306.h>
 #include <string>
 
 #define MAX_ELEMENTS 10
@@ -67,7 +67,7 @@ int elementCount = 0;
 int clickableCount = 0;
 int screenCount = 0;
 
-DisplayLib::DisplayLib(Adafruit_SH1106G *displayObject) {
+DisplayLib::DisplayLib(Adafruit_SSD1306 *displayObject) {
   _display = displayObject;
 }
 
@@ -79,7 +79,7 @@ void DisplayLib::addText(const char *text, int xPos, int yPos, const char *ident
   if (elementCount >= MAX_ELEMENTS)
     return;
 
-  
+    
   if (text == nullptr || text[0] == '\0') {
     text = " ";
 }
@@ -211,10 +211,16 @@ void DisplayLib::addBtnList(int xPos, int yPos, int itemSpacing, boolean downwar
 }
 
 void DisplayLib::begin() {
-  _display->begin(0x3c, true);
+  Serial.println("VV");
+  
+  _display->begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  Serial.println("YY");
   _display->clearDisplay();
+  Serial.println("XX");
   _display->setTextSize(1);
-  _display->setTextColor(SH110X_WHITE);
+  Serial.println("OO");
+  _display->setTextColor(SSD1306_WHITE);
+  Serial.println("PP");
 }
 
 void DisplayLib::cycle(boolean forward) {
@@ -304,6 +310,7 @@ void DisplayLib::back() {
 }
 
 void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag) {
+  Serial.println("aa");
   for (int i = 0; i < screenCount; i++) {
     if (strcmp(screens[i].name, name) == 0) {
       elementCount = screens[i].elementCount;
@@ -378,40 +385,40 @@ void DisplayLib::historyPop(){
 }
 void DisplayLib::showText(const char *text, int xPos, int yPos) {
   _display->setCursor(xPos, yPos);
-
+  Serial.printf("Showing text %s \n", text);
   _display->println(text);
 }
 
 void DisplayLib::showButton(const char *text, int xPos, int yPos,
                             boolean active) {
   if (active) {
-    _display->setTextColor(SH110X_BLACK, SH110X_WHITE);
+    _display->setTextColor(SSD1306_BLACK, SSD1306_WHITE);
   }
   _display->setCursor(xPos, yPos);
   _display->println(text);
-  _display->drawRect(xPos - 2, yPos - 2, (strlen(text) * 6) + 4, 12,SH110X_WHITE);
-  _display->setTextColor(SH110X_WHITE);
+  _display->drawRect(xPos - 2, yPos - 2, (strlen(text) * 6) + 4, 12,SSD1306_WHITE);
+  _display->setTextColor(SSD1306_WHITE);
 }
 
 void DisplayLib::showCheckbox(int xPos, int yPos, int size, boolean active, boolean clicked) {
     
   _display->setCursor(xPos, yPos);
-  _display->drawRect(xPos, yPos, size, size, SH110X_WHITE);
+  _display->drawRect(xPos, yPos, size, size, SSD1306_WHITE);
 
   
   
   // Since there are 4 states a checkbox can be in we need 4 styles
   if (active && clicked){
-  _display->drawRect(xPos - 1, yPos - 1, size + 2, size + 2, SH110X_WHITE);
-  _display->drawLine(xPos, yPos+ size - 1, xPos + size - 1, yPos, SH110X_WHITE);
-  _display->drawLine(xPos, yPos, xPos + size - 1, yPos + size - 1, SH110X_WHITE);
+  _display->drawRect(xPos - 1, yPos - 1, size + 2, size + 2, SSD1306_WHITE);
+  _display->drawLine(xPos, yPos+ size - 1, xPos + size - 1, yPos, SSD1306_WHITE);
+  _display->drawLine(xPos, yPos, xPos + size - 1, yPos + size - 1, SSD1306_WHITE);
 } else if (clicked){
   
-  _display->drawLine(xPos, yPos+ size - 1, xPos + size - 1, yPos, SH110X_WHITE);
-  _display->drawLine(xPos, yPos, xPos + size - 1, yPos + size - 1, SH110X_WHITE);
+  _display->drawLine(xPos, yPos+ size - 1, xPos + size - 1, yPos, SSD1306_WHITE);
+  _display->drawLine(xPos, yPos, xPos + size - 1, yPos + size - 1, SSD1306_WHITE);
 
 } else if (active){
-    _display->drawRect(xPos - 1, yPos - 1, size + 2, size + 2, SH110X_WHITE);
+    _display->drawRect(xPos - 1, yPos - 1, size + 2, size + 2, SSD1306_WHITE);
   }
 }
 
