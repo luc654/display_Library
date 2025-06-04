@@ -66,6 +66,7 @@ ScreenLoaded screens[MAX_SCREENS];
 int elementCount = 0;
 int clickableCount = 0;
 int screenCount = 0;
+int activeScreenIndex = -1;
 
 DisplayLib::DisplayLib(Adafruit_SSD1306 *displayObject) {
   _display = displayObject;
@@ -100,6 +101,7 @@ void DisplayLib::setText(const char *identifier, const char *text, boolean all){
     }
   }
 
+  Serial.println(activeScreenIndex);
   // Loop through all screens
   for (int i = 0; i < screenCount; i++){
     // Loop through all elements in screen
@@ -110,6 +112,10 @@ void DisplayLib::setText(const char *identifier, const char *text, boolean all){
         if (strcmp(screens[i].screenElements[j].data.textParams.identifier, identifier) == 0){
           // Update text
           screens[i].screenElements[j].data.textParams.text = text;
+          if(activeScreenIndex != i){
+            elemId = 0;
+            return;
+          }
           
           // If not update all with identifier then return
           if (!all){
@@ -311,7 +317,7 @@ void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag)
       if(startPos > clickableCount){
         startPos = 0;
       }
-      
+      activeScreenIndex = i;
       for (int j = 0; j < elementCount; j++) {
         screenElements[j] = screens[i].screenElements[j];
       
