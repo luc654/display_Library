@@ -257,6 +257,7 @@ void DisplayLib::flush() {
     if (screenElements[id].active) {
       // Serial.print("D ");
       // Serial.println(id);
+      prevActive = id;
       if (screenElements[id].type == CHECKBOX) {
         checkboxStates[id] = !checkboxStates[id]; 
         screenElements[id].data.checkParams.clicked = checkboxStates[id];
@@ -338,9 +339,7 @@ void DisplayLib::loadScreen(const char *name, int startPos, boolean historyFlag)
         startPos = screens[i].clickableElements[0].id;
       } 
       for (int j = 0; j < clickableCount; j++) {
-  // Serial.printf("Setting %d trying %d\n",
-  //               screens[i].clickableElements[j].id,
-  //               startPos);
+  // Serial.printf("Setting %d trying %d\n", screens[i].clickableElements[j].id,startPos);
 
   if (screens[i].clickableElements[j].id == startPos) {
     // Found the clickable‐element whose .id matches startPos:
