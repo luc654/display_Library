@@ -1,5 +1,5 @@
 # C++ Microcontroller GUI library
-A small and simple to understand library designed for the SSD1306 with SH110X Drivers.
+A small and simple to understand library designed for Oled displays with the SSD1306 or SH110X Drivers.
 
 ## Dependencies
 Requires Adafruit GFX library & AdafruitSH110x library
