@@ -76,25 +76,25 @@ void loop() {
   if(sleepMode == false){
 
   // Check sleep mode
-  if(digitalRead(BUTTON_A) && digitalRead(BUTTON_C)){
+  if(!digitalRead(BUTTON_A) && !digitalRead(BUTTON_C)){
     sleepMode = true;
     displayController.loadScreen("sleep");
     delay(100);
   }
 
-  if (digitalRead(BUTTON_A)) {
-    handleHold('A', []() { displayController.cycle(true); }, 100);
-  } else if (digitalRead(BUTTON_B)) {
+  if (!digitalRead(BUTTON_A)) {
+    handleHold('A', []() { displayController.cycle(false); }, 100);
+  } else if (!digitalRead(BUTTON_B)) {
     handleHold('B', []() { displayController.flush();}, 50);
-  } else if (digitalRead(BUTTON_C)) {
-    handleHold('C', []() { displayController.cycle(false); }, 100);
+  } else if (!digitalRead(BUTTON_C)) {
+    handleHold('C', []() { displayController.cycle(true); }, 100);
   } else {
     currentHold = '\0';  
   }
     } 
     else 
     {
-      if(digitalRead(BUTTON_A) && digitalRead(BUTTON_C)){
+      if(!digitalRead(BUTTON_A) && !digitalRead(BUTTON_C)){
         sleepMode = false;
         displayController.loadScreen("home");
       delay(100);
